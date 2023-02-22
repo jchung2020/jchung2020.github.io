@@ -1,5 +1,40 @@
 [
   {
+    "objectID": "posts/perceptron/perceptron_blog.html",
+    "href": "posts/perceptron/perceptron_blog.html",
+    "title": "Perceptron",
+    "section": "",
+    "text": "Link to code:"
+  },
+  {
+    "objectID": "posts/perceptron/perceptron_blog.html#what-is-the-perceptron",
+    "href": "posts/perceptron/perceptron_blog.html#what-is-the-perceptron",
+    "title": "Perceptron",
+    "section": "What is the Perceptron?",
+    "text": "What is the Perceptron?\nThe Perceptron is a type of machine learning algorithm called a binary linear classifier. Given data with binary labels, the Perceptron can produce a hyperplane that separates the data according to each labels. Hence prediction only requires knowing the orientation of the point relative to the hyperplane. However, as we shall see, the Perceptron is limited by whether or not the data is linearly separable."
+  },
+  {
+    "objectID": "posts/perceptron/perceptron_blog.html#breakdown-of-the-perceptron-algorithm",
+    "href": "posts/perceptron/perceptron_blog.html#breakdown-of-the-perceptron-algorithm",
+    "title": "Perceptron",
+    "section": "Breakdown of the Perceptron Algorithm",
+    "text": "Breakdown of the Perceptron Algorithm\nThe Perceptron functions by using a weight vector \\(\\bf{w}\\) to characterize the (hopefully) separating hyperplane. After starting with a random initial guess for the weights, we continually update the weights by first choosing a random index i and hence its random point X_i.\nAs a note in the code, I convert the \\(i^{th}\\) label y[i] to y_sign_i with 2*y[i]-1. This step just ensures that instead of being mapped to 0 or 1 as y is, y_sign_i will be mapped to -1 and 1.\nThe main idea of the update is to add y_sign_i*X_i to the weights for points X_i with incorrect labels. This step changes the weight so the label on point X_i will be closer to the correct one. We check if the predicted label is incorrect by checking if the dot product of w and X_i multiplied by y_sign_i is negative or positive. Then, if the signs are the same, this quantity will be positive, and hence the multiplier to the shift in weights is 0 (so no change). Otherwise the weight vector is updated with this shift.\n\nfrom perceptron import Perceptron\n\n#function used to find separating hyperplane\nperceptron.fit(X,y,max_steps)\n\n\"\"\"\nPerceptron update code\n\"\"\"\n\n#take a random index i\ni = np.random.randint(n-1)\n\n#choose point X_i\nX_i = X_[i]\n\n#convert label of point i to -1 or 1\ny_sign_i = 2*y[i]-1\n\n#update weight\nself.w = self.w + int(np.dot(self.w,X_i)*y_sign_i < 0  )*y_sign_i*X_i"
+  },
+  {
+    "objectID": "posts/perceptron/perceptron_blog.html#experiments",
+    "href": "posts/perceptron/perceptron_blog.html#experiments",
+    "title": "Perceptron",
+    "section": "Experiments",
+    "text": "Experiments\n\n2D Linearly Separable Data\nBelow I have plotted the given example for running the Perceptron algorithm on data with 2 features.\n\nimport numpy as np \nimport pandas as pd \nimport seaborn as sns \nfrom matplotlib import pyplot as plt\n\nfrom sklearn.datasets import make_blobs\n\nnp.random.seed(12345)\n\nn = 100 \np_features = 3\n\nX, y = make_blobs(n_samples = 100, n_features = p_features - 1, centers = [(-1.7, -1.7), (1.7, 1.7)])\n\nfig = plt.scatter(X[:,0], X[:,1], c = y) \nxlab = plt.xlabel(\"Feature 1\") \nylab = plt.ylabel(\"Feature 2\")\n\n\n\n\nRunning the code, we can see that a perfect accuracy of 1.0 is reached. The weight vector corresponds to the example given.\n\nfrom perceptron import Perceptron\n%load_ext autoreload\n%autoreload 2\n\np = Perceptron()\np.fit(X, y, max_steps=1000)\nprint(\"Weight vector: \",p.w)\nprint(\"Final accuracy: \", p.score(X,y))\nprint(\"Last 10 accuracy scores: \",p.history[-10:]) #just the last few values\n\nScore is good enough!\nWeight vector:  [2.10557404 3.1165449  0.25079936]\nFinal accuracy:  1.0\nLast 10 accuracy scores:  [0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 0.99, 1.0]\n\n\nThis plot shows the evolution of the accuracy over iterations, which does not always increase.\n\nfig = plt.plot(p.history)\nxlab = plt.xlabel(\"Iteration\")\nylab = plt.ylabel(\"Accuracy\")\n\n\n\n\nThe data can now be visualized with the separating line between the two clusters of points.\n\ndef draw_line(w, x_min, x_max):\n  x = np.linspace(x_min, x_max, 101)\n  y = -(w[0]*x + w[2])/w[1]\n  plt.plot(x, y, color = \"black\")\n\nfig = plt.scatter(X[:,0], X[:,1], c = y)\nfig = draw_line(p.w, -2, 2)\n\nxlab = plt.xlabel(\"Feature 1\")\nylab = plt.ylabel(\"Feature 2\")\n\n\n\n\n\n\n2D Non-linearly separable data\nBelow, I run the Perceptron algorithm on the same data, but shifted so that it is just barely not linearly separable.\n\nnp.random.seed(12345)\n\nX2, y2 = make_blobs(n_samples = 100, n_features = p_features - 1, centers = [(-1.4, -1.4), (1.7, 1.7)])\n\nfig2 = plt.scatter(X2[:,0], X2[:,1], c = y) \nxlab2 = plt.xlabel(\"Feature 1\") \nylab2 = plt.ylabel(\"Feature 2\")\n\n\n\n\nNow running the Perceptron algorithm:\n\np2 = Perceptron()\np2.fit(X2, y2, max_steps=1000)\nprint(\"Weight vector: \",p2.w)\nprint(\"Final accuracy: \", p2.score(X2,y2))\nprint(\"Last 10 accuracy scores: \",p2.history[-10:]) #just the last few values\n\nWeight vector:  [ 2.56926963  4.22077252 -0.74920064]\nFinal accuracy:  0.98\nLast 10 accuracy scores:  [0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98, 0.98]\n\n\nWe can see from plotting the accuracy that, while we never converge to a perfect classification after 1000 iterations, the score is still high.\n\nfig2 = plt.plot(p2.history)\nxlab2 = plt.xlabel(\"Iteration\")\nylab2 = plt.ylabel(\"Accuracy\")\n\n\n\n\n\n\n6D Linearly Separable Data\nThese next points in 6D are not visualizable, but we can still run the Perceptron algorithm.\n\np_features = 7\n\nX3, y3 = make_blobs(n_samples = 100, n_features = p_features - 1, centers = [(-1.7, 1.7, 1.7, -1.7, -1.7, 1.7), (1.7, 1.7, 1.7, 1.7, 1.7, 1.7)])\n\np3 = Perceptron()\np3.fit(X3, y3, max_steps=1000)\nprint(\"Weight vector: \",p3.w)\nprint(\"Final accuracy: \", p3.score(X3,y3))\nprint(\"Last 10 accuracy scores: \",p3.history[-10:]) #just the last few values\n\nScore is good enough!\nWeight vector:  [ 5.55526998  1.58997633 -1.00733643  1.04302711  3.54095849 -0.6594312\n  0.95889091]\nFinal accuracy:  1.0\nLast 10 accuracy scores:  [0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 0.97, 1.0]\n\n\nIn this case, we do actually achieve a 100% classification! The data therefore is linearly separable.\n\nfig3 = plt.plot(p3.history)\nxlab3 = plt.xlabel(\"Iteration\")\nylab3 = plt.ylabel(\"Accuracy\")"
+  },
+  {
+    "objectID": "posts/perceptron/perceptron_blog.html#runtime-complexity",
+    "href": "posts/perceptron/perceptron_blog.html#runtime-complexity",
+    "title": "Perceptron",
+    "section": "Runtime Complexity",
+    "text": "Runtime Complexity\nIn equation (1), we have a dot product between \\(\\bf{\\tilde{w}}^{(t)}\\) and \\(\\bf{x_i}\\). As both are dimension \\(p+1\\), this accounts for \\(O(p)\\) term by term multiplication and addition prodcedures. The addition of \\(\\bf{\\tilde{w}}^{(t)}\\) and \\(\\bf{x_i}\\) similarly consists of \\(O(p)\\) additions. So the total complexity is \\(O(p)\\). Since this is for a single index, the total number of points \\(n\\) is irrelevant."
+  },
+  {
     "objectID": "posts/example-blog-post/index.html",
     "href": "posts/example-blog-post/index.html",
     "title": "Hello Blog",
@@ -18,7 +53,7 @@
     "href": "index.html",
     "title": "My Awesome CSCI 0451 Blog",
     "section": "",
-    "text": "An example blog post illustrating the key techniques you’ll need to demonstrate your learning in CSCI 0451.\n\n\n\n\n\n\nJan 10, 2023\n\n\nPhil Chodrow\n\n\n\n\n\n\nNo matching items"
+    "text": "An implementation of the Perceptron Algorithm.\n\n\n\n\n\n\nFeb 22, 2023\n\n\nJay-U Chung\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\nAn example blog post illustrating the key techniques you’ll need to demonstrate your learning in CSCI 0451.\n\n\n\n\n\n\nJan 10, 2023\n\n\nPhil Chodrow\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
