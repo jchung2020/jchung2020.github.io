@@ -53,7 +53,7 @@
     "href": "index.html",
     "title": "My Awesome CSCI 0451 Blog",
     "section": "",
-    "text": "An implementation of the Perceptron Algorithm.\n\n\n\n\n\n\nFeb 22, 2023\n\n\nJay-U Chung\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\nAn example blog post illustrating the key techniques you’ll need to demonstrate your learning in CSCI 0451.\n\n\n\n\n\n\nJan 10, 2023\n\n\nPhil Chodrow\n\n\n\n\n\n\nNo matching items"
+    "text": "Comparing the convergence of Gradient Descent Algorithms.\n\n\n\n\n\n\nMar 1, 2023\n\n\nJay-U Chung\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nAn implementation of the Perceptron Algorithm.\n\n\n\n\n\n\nFeb 22, 2023\n\n\nJay-U Chung\n\n\n\n\n\n\n  \n\n\n\n\n\n\n\n\nAn example blog post illustrating the key techniques you’ll need to demonstrate your learning in CSCI 0451.\n\n\n\n\n\n\nJan 10, 2023\n\n\nPhil Chodrow\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "about.html",
@@ -61,5 +61,33 @@
     "title": "About",
     "section": "",
     "text": "This is the About page for this blog."
+  },
+  {
+    "objectID": "posts/gradient_descent/gradient_descent.html",
+    "href": "posts/gradient_descent/gradient_descent.html",
+    "title": "Variations on Gradient Descent",
+    "section": "",
+    "text": "Link to code: https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/perceptron\nHere I will implement three different variations on gradient descent using logistic regression loss: regular gradient descent, stochastic gradient descent, and stochastic gradient descent with momentum.\nWith gradient descent, I begin with a random guess for the minimizer of the loss function. At each point, I compute the gradient and take a step (whose size is modulated by the stepping size) in that direction. This updates the new guess for the minimum, and I continue until the gradient is close to the zero vector.\nFor stochastic gradient descent, I use the same general approach but instead divide the data up into random batches. Additionally, I implemented stochastic gradient descent with momentum, which uses the difference between our current and previous guesses for the momentum update to inform the next update on our guess. This ensures that if we have a good guess for the minimizer, we more quickly head in that direction (and more quickly converge).\nStarting with simple 2D data:\nIn this case, notice that stochastic gradient descent with momentum converges fastest, then stochastic gradient descent, then regular gradient descent.\nAs we can see, the separating lines for all algorithm are quite similar."
+  },
+  {
+    "objectID": "posts/gradient_descent/gradient_descent.html#altering-the-stepping-size",
+    "href": "posts/gradient_descent/gradient_descent.html#altering-the-stepping-size",
+    "title": "Variations on Gradient Descent",
+    "section": "Altering the Stepping Size",
+    "text": "Altering the Stepping Size\nBelow is a case I show some larger stepping sizes. It is suprisingly robust, however, as even a large stepping size of 30 yields a reasonable loss. Perhaps the gradient is naturally small.\n\nLR = LogisticRegression()\nLR.fit(X, y, alpha = 30, max_epochs = 100)\n\nnum_steps = len(LR.loss_history)\nplt.plot(np.arange(num_steps) + 1, LR.loss_history, label = \"stepping size 30\")\n\nLR = LogisticRegression()\nLR.fit(X, y, alpha = 50, max_epochs = 100)\n\nnum_steps = len(LR.loss_history)\nplt.plot(np.arange(num_steps) + 1, LR.loss_history, label = \"stepping size 50\")\n\nlegend = plt.legend() \nplt.xlabel('Iterations')\nplt.ylabel('Loss')\nplt.title(\"Large Stepping Size Comparison on Gradient Descent\")\n\nText(0.5, 1.0, 'Large Stepping Size Comparison on Gradient Descent')\n\n\n\n\n\nAs we can see, the loss never converges for a stepping size of 50, as this proves to be too large for proper gradient descent."
+  },
+  {
+    "objectID": "posts/gradient_descent/gradient_descent.html#altering-the-batch-size",
+    "href": "posts/gradient_descent/gradient_descent.html#altering-the-batch-size",
+    "title": "Variations on Gradient Descent",
+    "section": "Altering the Batch Size",
+    "text": "Altering the Batch Size\nHere I demonstrate that the batch size can affect how quickly stochastic gradient search will converge.\n\nLR1 = LogisticRegression()\nLR1.fit_stochastic(X, y, \n                  m_epochs = 100, \n                  momentum = False, \n                  batch_size = 25, \n                  alpha = 0.1) \n\nLR2 = LogisticRegression()\nLR2.fit_stochastic(X, y, \n                  m_epochs = 100, \n                  momentum = False, \n                  batch_size = 10, \n                  alpha = 0.1) \n\nnum_steps = len(LR1.loss_history)\n\nplt.plot(np.arange(num_steps) + 1, LR1.loss_history, label = \"loss (batch size 25)\")\nplt.plot(np.arange(num_steps) + 1, LR2.loss_history, label = \"loss (batch size 10)\")\n#plt.plot(np.arange(num_steps) + 1, LR.history, label = \"accuracy\")\n\nplt.loglog()\n\nlegend = plt.legend() \n\nplt.xlabel('Iterations')\nplt.ylabel('Loss')\nplt.title(\"Batch Size Comparison for Stochastic Gradient Descent\")\n\nText(0.5, 1.0, 'Batch Size Comparison for Stochastic Gradient Descent')\n\n\n\n\n\nAs we can see, a smaller batch size allows for a faster convergence, perhaps because the gradient descent more frequently updates the point of the minimum loss."
+  },
+  {
+    "objectID": "posts/gradient_descent/gradient_descent.html#gradient-descent-in-higher-dimensions",
+    "href": "posts/gradient_descent/gradient_descent.html#gradient-descent-in-higher-dimensions",
+    "title": "Variations on Gradient Descent",
+    "section": "Gradient Descent in Higher Dimensions",
+    "text": "Gradient Descent in Higher Dimensions\nBelow I have plotted comparisons of the gradient descent algorithms in 10 dimensions. Notice that the convergence is faster for stochastic gradient with momentum. In fact, all the gradient descent algorithms converge quite quickly.\nI initially used random vectors for the centers of the blobs but it seems that the data may be linearly separable (hence the fast convergence). Perhaps in higher dimensions, this method of generating data makes it easier to separate linearly. For this new data set, I randomized a vector to multiply to one data set so they are not as linearly separable.\n\np_features = 11\n\nX, y = make_blobs(n_samples = 500, n_features = p_features - 1, centers = [(1.72810539, -0.76966727, -8.40792394,  0.00943856,  1.33926325,  1.80831111,\n -8.52324258,  1.39576299,  1.50974231, -6.81079023), (1.2532123,   -0.45271457, -4.67704148,  0.00651874,  1.5479877,   0.84146263,\n -3.45566331,  0.62523429,  0.684547,   -2.54964336)])\n\nfig, axs = plt.subplots(2, figsize=(10, 10))\nfig.suptitle('Vertically stacked subplots')\n\nLR = LogisticRegression()\nLR.fit_stochastic(X, y, \n                  m_epochs = 1000, \n                  momentum = True, \n                  batch_size = 10, \n                  alpha = 0.1) \n\nnum_steps = len(LR.loss_history)\naxs[0].plot(np.arange(num_steps) + 1, LR.loss_history, label = \"stochastic gradient (momentum)\")\naxs[1].plot(np.arange(num_steps) + 1, LR.history, label = \"stochastic gradient (momentum)\")\n\nLR = LogisticRegression()\nLR.fit_stochastic(X, y, \n                  m_epochs = 1000, \n                  momentum = False, \n                  batch_size = 10, \n                  alpha = 0.1)\n\nnum_steps = len(LR.loss_history)\naxs[0].plot(np.arange(num_steps) + 1, LR.loss_history, label = \"stochastic gradient\")\naxs[1].plot(np.arange(num_steps) + 1, LR.history, label = \"stochastic gradient\")\n\nLR = LogisticRegression()\nLR.fit(X, y, alpha = 0.1, max_epochs = 1000)\n\nnum_steps = len(LR.loss_history)\naxs[0].plot(np.arange(num_steps) + 1, LR.loss_history, label = \"gradient\")\naxs[1].plot(np.arange(num_steps) + 1, LR.history, label = \"gradient\")\n\n#plt.loglog()\naxs[0].loglog()\naxs[1].loglog()\n\nlegend = axs[0].legend() \nlegend = axs[1].legend() \n\naxs[0].set_title(\"Loss Comparison for Gradient Descent Algorithms\")\naxs[0].set(xlabel = 'Iterations', ylabel= 'Loss')\naxs[1].set_title(\"Accuracy Comparison for Gradient Descent Algorithms\")\naxs[1].set(xlabel = 'Iterations', ylabel= 'Accuracy')\n\n[Text(0.5, 0, 'Iterations'), Text(0, 0.5, 'Accuracy')]\n\n\n\n\n\nStochastic gradient descent with momentum clearly converges the fastest. Stochastic gradient both with and without momentum appear to fluctuate in the loss (probably as a result of the random batches), but both converge faster than regular gradient descent and even reach 100% accuracy."
   }
 ]
