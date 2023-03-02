@@ -214,7 +214,7 @@ background-size: cover;
 
 
 
-<p>Link to code: <a href="https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/perceptron" class="uri">https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/perceptron</a></p>
+<p>Link to code: <a href="https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/gradient_descent" class="uri">https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/gradient_descent</a></p>
 <p>Here I will implement three different variations on gradient descent using logistic regression loss: regular gradient descent, stochastic gradient descent, and stochastic gradient descent with momentum.</p>
 <p>With gradient descent, I begin with a random guess for the minimizer of the loss function. At each point, I compute the gradient and take a step (whose size is modulated by the stepping size) in that direction. This updates the new guess for the minimum, and I continue until the gradient is close to the zero vector.</p>
 <p>For stochastic gradient descent, I use the same general approach but instead divide the data up into random batches. Additionally, I implemented stochastic gradient descent with momentum, which uses the difference between our current and previous guesses for the momentum update to inform the next update on our guess. This ensures that if we have a good guess for the minimizer, we more quickly head in that direction (and more quickly converge).</p>
