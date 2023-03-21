@@ -218,14 +218,14 @@ background-size: cover;
 
 
 
-<p>Link to code: &lt;&gt;</p>
+<p>Link to code: <a href="https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/linear_regression" class="uri">https://github.com/jchung2020/jchung2020.github.io/tree/main/posts/linear_regression</a></p>
 <section id="linear-regression" class="level2">
 <h2 class="anchored" data-anchor-id="linear-regression">Linear Regression</h2>
 <p>Linear Regression Algorithms take our data, encoded in the usual feature matrix <span class="math inline">\(\textbf{X}\)</span>, and a target vector <span class="math inline">\(\textbf{y}\)</span> of values, and creates a prediction for these values.</p>
 <p>The goal of this blog post is to compare the analytic and gradient methods of Linear Regression, implement LASSO regularization, and implement our algorithms to some data.</p>
 <section id="analytic-and-gradient-methods" class="level3">
 <h3 class="anchored" data-anchor-id="analytic-and-gradient-methods">Analytic and Gradient Methods</h3>
-<p>As usual, we start by getting our data. Notice here we have generated the training and validation data randomly.</p>
+<p>As usual, we start by getting our data. Notice here we have generated the training and validation data randomly. We generate a random weight vector, and with some noise, some data around that weight vector.</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> linear_regression <span class="im">import</span> LinearRegression</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -272,7 +272,7 @@ background-size: cover;
 <p><img src="linear_regression_files/figure-html/cell-4-output-1.png" class="img-fluid"></p>
 </div>
 </div>
-<p>The analytic method uses matrix multiplication. As long as <span class="math inline">\(\mathbf{X^{T} X}\)</span> is invertible, it is possible to find exact solution that will minimize the loss. This, however, is costly. If there are <span class="math inline">\(p\)</span> features and <span class="math inline">\(n\)</span> data points, the algorithm will take time <span class="math inline">\(O(np^2)\)</span>.</p>
+<p>The analytic method uses matrix multiplication. As long as <span class="math inline">\(\mathbf{X^{T} X}\)</span> is invertible, it is possible to find exact solution that will minimize the linear-regression loss. This, however, is computationally costly. If there are <span class="math inline">\(p\)</span> features and <span class="math inline">\(n\)</span> data points, the algorithm will take time <span class="math inline">\(O(np^2)\)</span>.</p>
 <div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>LR <span class="op">=</span> LinearRegression()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>LR.fit_analytic(X_train, y_train) <span class="co"># I used the analytical formula as my default fit method</span></span>
@@ -388,7 +388,7 @@ Weight vector:  [0.73177951 0.68551826]</code></pre>
 </div>
 </div>
 <p>Here I have plotted the training and validation scores. So we can see that the training score continually increases, reaching a perfect score of 1.0 at 99 features.</p>
-<p>As expected, the training score is always larger than the validation score. We can see that after about 50 features, the validation score drops, dropping to a negative once 99 features are reached. This is a consequence of overfitting. It seems that linear regression naturally overfits if the number of features is close to the number of data points. Perhaps this is not unsurprising since information wise, if we as many features as out data, we can describe our data completely. Of course, this would not predict the trend, hence the overfitting.</p>
+<p>As expected, the training score is always larger than the validation score. We can see that after about 50 features, the validation score drops, dropping to a negative value when close to 99 features are reached. This is a consequence of overfitting. It seems that linear regression naturally overfits if the number of features is close to the number of data points. Perhaps this is not unsurprising since information wise, if we as many features as our data, we can describe our data completely. Of course, this would not predict the trend when we use our training data, hence the overfitting.</p>
 <p>Note that a negative validation score means that our fit is worse than just using the average. We are minimizing the loss <span class="math inline">\(|| \textbf{X}\textbf{w} - \textbf{y}||^{2}_{2}\)</span>. But if there are 99 features and 100 data points, really <span class="math inline">\(\textbf{X}\)</span> is 100 by 100 in dimension (since it is padded by a column of 1s). Hence it could be possible to invert <span class="math inline">\(\textbf{X}\)</span>, a square matrix, which would give a unique solution to <span class="math inline">\(\textbf{X}\textbf{w} = \textbf{y}\)</span>. This solution would minimize loss. This may sound good, but this means that our algorithm perfectly minimizes loss to 0 on the training data, hence the perfect 100% score on the training data and the overfitting or poor score on the validation data.</p>
 </section>
 <section id="fixing-linear-regression-with-lasso-regularization" class="level3">
@@ -453,7 +453,7 @@ Weight vector:  [0.73177951 0.68551826]</code></pre>
 <p><img src="linear_regression_files/figure-html/cell-13-output-2.png" class="img-fluid"></p>
 </div>
 </div>
-<p>Varying the Lasso algorithm over a variety of alpha or learning parameter values, we see that a value of 0.0005 produces the best validation score.</p>
+<p>Varying the Lasso algorithm over a variety of alpha or regularization parameterizing values, we see that a value of 0.0005 produces the best validation score.</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, axarr <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, sharex <span class="op">=</span> <span class="va">True</span>, sharey <span class="op">=</span> <span class="va">True</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -477,7 +477,7 @@ Weight vector:  [0.73177951 0.68551826]</code></pre>
 </div>
 </div>
 <p>So we can see that the validation score never becomes negative, though it still drops after about 50 features.</p>
-<p>I have excluded the validation scores that are negative for regular linear regression, and we can see that LASSO is pretty similar for a large number of features (just not very close to 99). Perhaps it is not much better at controlling for overfitting.</p>
+<p>I have excluded the validation scores that are negative for regular linear regression, and we can see that LASSO is pretty similar for a large number of features (just not very close to 99). Perhaps it is not much better at controlling for overfitting except for a large number of features.</p>
 </section>
 <section id="applying-linear-regression-to-the-bikeshare-data-set" class="level3">
 <h3 class="anchored" data-anchor-id="applying-linear-regression-to-the-bikeshare-data-set">Applying Linear Regression to the Bikeshare Data Set</h3>
