@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/bias_audit/bias_audit.html",
       "/posts/linear_regression/linear_regression.html",
       "/posts/penguins/penguins.html",
       "/posts/gradient_descent/gradient_descent.html",
