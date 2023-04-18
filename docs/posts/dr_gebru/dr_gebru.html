@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Jay-U Chung">
+<meta name="dcterms.date" content="2023-04-19">
+<meta name="description" content="Researching Dr.&nbsp;Gebru’s works for her upcoming talk in Middlebury.">
+
+<title>My Awesome CSCI 0451 Blog - Dr.&nbsp;Timnit Gebru and AI Ethics</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<style>
+    .quarto-title-block .quarto-title-banner {
+      color: white;
+background-image: url(../../img/landscape.png);
+background-size: cover;
+    }
+    </style>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">My Awesome CSCI 0451 Blog</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Dr.&nbsp;Timnit Gebru and AI Ethics</h1>
+                  <div>
+        <div class="description">
+          Researching Dr.&nbsp;Gebru’s works for her upcoming talk in Middlebury.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Jay-U Chung </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">April 19, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<section id="dr.-timnit-gebru-is" class="level2">
+<h2 class="anchored" data-anchor-id="dr.-timnit-gebru-is">Dr.&nbsp;Timnit Gebru is…</h2>
+<p>Dr.&nbsp;Timnit Gebru is an acclaimed computer scientist whose work focuses on algorithmic bias and fairness in computing. She has worked as an AI researcher for Microsoft and on Google’s team on ethics in artificial intelligence. Some of her most notable papers include the Gender Shades project, which showed that facial recognition software from IBM, Microsoft, Face++, and Google all demonstrated systematic bias by performing worse on darker skinned people, especially women of color. Another prominent paper, yet to be published, was “On the Dangers of Stochastic Parrots: Can Language Models Be Too Big?”, which examined how Natural Language Processing models (clearly a hot topic then and now) have been focused on becoming larger in size and more powerful without taking into account the data that they were using to train. In particular, they scraped text from online which included white supremacist, misognyistic, ageist, etc. views (https://time.com/6132399/timnit-gebru-ai-google/). This was a very problematic result that given that, as in ProPublica or Gender Shades, biased training data clearly have very negative implications for marginalized groups. This paper caused enough discontent at Google that they tried to convince her to remove Google co-authors from this paper before firing her shortly after. As a personal aside, this reflects badly on Google - Gebru’s own concerns were about how this push for the development of AI and the competition with other companies focuses on growth rather than ethics, and her firing proves this point.</p>
+<p>This next part will mostly be my own interpretation. I think she is important as a researcher because she has exposes uncomfortable truths about how Big Tech, academia, and governments perpetuate social inequality. She has legitmized the field of social responsibility by showing concretely that some of the most important tech projects exhibit systematic racial or gender bias. She has also spoken out personally about her own experiences with injustices. This includes personal incidents of racial harassment from the police or colleagues, the culture of sexual harassment and negligence in companies or academic conferences, and the striking lack of people of color (especially Black people and Black women) in tech conferences. In short, the people in charge of the largest AI projects which have the strongest influence on our lives are not very responsible, belonging to a culture of misogyny and racism which their algorithms themselves also exhibit. She has pushed to make the space more equitable by founding projects as Black in AI and DAIR, which seeks to create community funded AI research that values ethical concerns first. To this extent, her status in the field is also a great inspiration to others and an example that it can be possible for marginalized people to achieve success and combat the inequity in academia and business and our general society.</p>
+</section>
+<section id="summarizing-dr.-gebrus-tutorial-on-fairness-accountability-transparency-and-ethics-fate-in-computer-vision" class="level2">
+<h2 class="anchored" data-anchor-id="summarizing-dr.-gebrus-tutorial-on-fairness-accountability-transparency-and-ethics-fate-in-computer-vision">Summarizing Dr.&nbsp;Gebru’s Tutorial on Fairness, Accountability, Transparency, and Ethics (FATE) in Computer Vision</h2>
+<p>Dr.&nbsp;Gebru’s talk was on algorithmic bias in computer vision. She notes that algorithms cannot be vetted, there is no regulation on what constitutes acceptable algorithms despite the great harm they can pose to society. As a concrete example, she points to the Baltimore police’s use of facial recognition to arrest those in the Freddie Gray protest, an undemocratic action that suppresses political participation. One danger she sees is that computer science abstracts people away from research problems, not considering the context of algorithms. This is deeper than making data fairer or more inclusive as this does not negate any harmful impacts algorithms like facial recognition can have - whether on identifying protestors or promoting gender stereotyped advertising, or even views that gender is something beyond a social construct. Data is often used without consent of individuals, as in IBM’s diversified facial recognition dataset, and does not benefit the people using it, as in China Big Brother tech using faces from Zimbabweans. Law enforcement even collects data to harm immigrant or black and brown communities. Another issue is automation bias - people trust algorithms, robots more because they don’t question it or know how it works. A final point she makes is that the people working on computer vision themselves are not diverse. Even ethical boards for Stanford are mostly white and work to marginalize others.</p>
+<p>I think everyone needs to understand that computer vision algorithms can be incredibly harmful to marginalized groups and that computer scientists need to be very aware of structural biases and therefore be responsible for the impact of their work, intended or not.</p>
+</section>
+<section id="question-for-dr.-gebru" class="level2">
+<h2 class="anchored" data-anchor-id="question-for-dr.-gebru">Question for Dr.&nbsp;Gebru</h2>
+<p>Dr.&nbsp;Gebru advocates against Big Tech’s view on the benefits of AI, which ignore the damage it does to marginalize communities. What can people do to change this? She’s talked about harmful views like longtermism, how workers should have more rights so they can prioritize ethics over deadlines, more education centering on ethics in computing, or government regulations. Can these incremental changes stop this harm or should it be down to an individual’s decision not to participate in harmful systems?</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -2,10 +2,12 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/dr_gebru/dr_gebru.html",
       "/posts/bias_audit/bias_audit.html",
       "/posts/linear_regression/linear_regression.html",
       "/posts/penguins/penguins.html",
       "/posts/gradient_descent/gradient_descent.html",
+      "/posts/adam/adam.html",
       "/posts/perceptron/perceptron_blog.html",
       "/posts/example-blog-post/index.html"
     ]
