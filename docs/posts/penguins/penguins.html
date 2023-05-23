@@ -990,8 +990,8 @@ Features selected:  ['Culmen Length (mm)' 'Flipper Length (mm)']</code></pre>
 </div>
 <p>Some test data has been reserved for us, which I will not touch or examine.</p>
 <p>The models I’ll examine are the Support Vector Machine, Decision Tree Classifier, and the Random Forest Classifier.</p>
-<p>For Support Vector Machine I modulate the gamma parameter from <span class="math inline">\(1^{-5}\)</span> to <span class="math inline">\(10^{5}\)</span>, and for the Decision Tree and Random Forest Classifiers, I iterate out to a maximum depth of 10. My reasoning, which may be flawed, is that there are at most around 6 features (if Island is included), so the depth should be a similar order.</p>
-<div class="cell" data-tags="[]">
+<p>For Support Vector Machine I modulate the gamma parameter from <span class="math inline">\(10^{-5}\)</span> to <span class="math inline">\(10^{5}\)</span>, and for the Decision Tree and Random Forest Classifiers, I iterate out to a maximum depth of 10. My reasoning, which may be flawed, is that there are at most around 6 features (if Island is included), so the depth should be a similar order.</p>
+<div class="cell" data-tags="[]" data-execution_count="58">
 <details>
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#for test all features </span></span>
@@ -1146,7 +1146,7 @@ RandomForestClassifier  - Max Test Score:  0.9852941176470589 , Parameter:  10 ,
 </section>
 <section id="conclusions" class="level2">
 <h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
-<p>Running our Random Forest Classifier model, we achieve a perfect testing accuracy.</p>
+<p>Running our Random Forest Classifier model, we achieve a perfect testing accuracy!</p>
 <div class="cell" data-execution_count="60">
 <details>
 <summary>Show the code</summary>
@@ -1164,7 +1164,7 @@ Training accuracy (cross-validation):  0.9650829562594267
 Testing accuracy:  1.0</code></pre>
 </div>
 </div>
-<p>Perhaps the perfect training accuracy is not so</p>
+<p>Perhaps the perfect training accuracy is not so ideal. It may be an indicator of overfitting.</p>
 <div class="cell" data-execution_count="18">
 <details>
 <summary>Show the code</summary>
@@ -1240,7 +1240,7 @@ Sex_MALE</code></pre>
 </div>
 </div>
 <p>Plotting the decision boundary, we see that it is fairly faithful to the data, whether the sex of the penguins is male or female. Perhaps there are a couple of data points for which it is overfit.</p>
-<p>Regardless, we have demonstrated that for this Palmer Penguins data set, it is possible to use machine learning to accurately classify the species of the penguin - and using on three features!</p>
+<p>Regardless, we have demonstrated that for this Palmer Penguins data set, it is possible to use machine learning to accurately classify the species of the penguin - and using only three features!</p>
 
 
 </section>

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Trong Le, Jay-U Chung, Kent Canonigo">
+<meta name="dcterms.date" content="2023-05-10">
+<meta name="description" content="We used deep learning to guess a patient’s race based on their chest X-ray.">
+
+<title>My Awesome CSCI 0451 Blog - Determining Race from Chest X-Rays</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<style>
+    .quarto-title-block .quarto-title-banner {
+      color: white;
+background-image: url(../../img/landscape.png);
+background-size: cover;
+    }
+    </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">My Awesome CSCI 0451 Blog</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html">About</a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com"><i class="bi bi-twitter" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Determining Race from Chest X-Rays</h1>
+                  <div>
+        <div class="description">
+          We used deep learning to guess a patient’s race based on their chest X-ray.
+        </div>
+      </div>
+                </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Trong Le, Jay-U Chung, Kent Canonigo </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 10, 2023</p>
+      </div>
+    </div>
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p>The GitHub repository for the project code can be found <a href="https://github.com/kennyerss/csci451-project">here</a>.</p>
+<section id="abstract" class="level1">
+<h1>1. Abstract</h1>
+<p>A series of prior results, including those by <span class="citation" data-cites="gichoya2022ai">Gichoya et al. (<a href="#ref-gichoya2022ai" role="doc-biblioref">2022</a>)</span>, have shown that it is possible to use deep convolutional neural networks to predict a patient’s self-reported race from chest radiographs with high accuracies. Since this result displays significant ethical concerns for medical imaging algorithms, we aim to reproduce these results and investigate the implications this algorithm could have for race-based medicine and the racial inequalities reinforced by algorithms. We use a subset of the chest radiographs obtained from the <a href="https://stanfordmlgroup.github.io/competitions/chexpert/">ChexPert</a> dataset, aiming to classify images into Black, White, Asian. We primarily train and test on a subset of data with equal proportions amongst all races. In particular, we compare the results of pretrained and untrained ResNet18 models and the EfficientNetB0 model. Our results achieve around 70 % accuracy, displaying some racial bias and having minimal gender bias. We therefore conclude that, on a smaller scale, we have confirmed that it is indeed possible to train neural networks to accurately classify race from chest radiographs.</p>
+<!-- We also looked into the ethical concerns that the success of this project can pose. Hypothetically, due to the fact that an 'unbiased' machine can classify racially ambiguous pictures of chest X-rays into different race groups, racial inequalities may be reinforced and justified. Realistically, this project shows that deep learning models can indeed tell the race of a patient from ambiguous medical information, which calls into question the fairness of the various models currently used in medical decision-making. -->
+</section>
+<section id="introduction" class="level1">
+<h1>2. Introduction</h1>
+<p>Deep neural networks are increasingly getting popular in medicine as diagnostic tools. While at times suprassing the accuracy of experts, results such as those by <span class="citation" data-cites="seyyed2021underdiagnosis">Seyyed-Kalantari et al. (<a href="#ref-seyyed2021underdiagnosis" role="doc-biblioref">2021</a>)</span> show concerning results of underdiagnosis for patients that are Black, Hispanic, younger, or belonging to a lower socieconomic status groups. Problematically this reinforces a history of minority groups or economically vulnerable groups receiving inadequate medical care, especially when many publicly available datasets are disproportionately represent White patients.</p>
+<p>As <span class="citation" data-cites="seyyed2021underdiagnosis">Seyyed-Kalantari et al. (<a href="#ref-seyyed2021underdiagnosis" role="doc-biblioref">2021</a>)</span> suggest, this may be a matter of confounding variables as bias amplification or differing prevalence. However, a paper by <span class="citation" data-cites="gichoya2022ai">Gichoya et al. (<a href="#ref-gichoya2022ai" role="doc-biblioref">2022</a>)</span> investigated the direct question - can race be inferred from chest X-rays? Clincially speaking this is something that is not expected, it is an implicit assumption that chest radiographs contain no information about one’s demographic characteristics, beyond those most relevant to physiology, such as age or biological sex. Many models specifically exclude characteristics so that classification is based solely on the image. However, deep neural networks are often a black box, being capable on picking up on pixel level patterns that are surprising.</p>
+<p>Indeed, the authors <span class="citation" data-cites="gichoya2022ai">Gichoya et al. (<a href="#ref-gichoya2022ai" role="doc-biblioref">2022</a>)</span> found that by using self-reported race labels, those being Black, White, and Asian, it is possible to classify chest radiographs into these three categories with high accuracies (0.91–0.99 using AUC metrics). To the extent that they investigated, this was not based on potentially race related characteristics, including bone or breast density or disease prevalence. Even highly degraded versions of the image maintained a high performance. Moreover, this pattern could not be replicated with algorithms that did not use the image data - “logistic regression model (AUC 0·65), a random forest classifier (0·64), and an XGBoost model (0·64) to classify race on the basis of age, sex, gender, disease, and body habitus performed much worse than the race classifiers trained on imaging data”. So as they conclude, “medical AI systems can easily learn to recognise self-reported racial identity from medical images, and that this capability is extremely difficult to isolate” - the problem may be prevalent in a large range of algorithms and would be difficult to correct for. Moreover, the fact that they obtained the results by training on a variety of popular and publicly available datasets for medical images, including the MIMIC-CXR, CheXpert, National lung cancer screening trial, RSNA Pulmonary Embolism CT, and the Digital Hand Atlas, further suggests that this could largely applicable to other AI projects.</p>
+<p>This paper is also not a standalone result. A prior paper by <span class="citation" data-cites="yi2021radiology">Yi et al. (<a href="#ref-yi2021radiology" role="doc-biblioref">2021</a>)</span> demonstrated that age and sex can be determined for Chinese and American populations. A paper by <span class="citation" data-cites="adleberg2022predicting">Adleberg et al. (<a href="#ref-adleberg2022predicting" role="doc-biblioref">2022</a>)</span>, training on the MIMIC-CXR dataset, created a deep learning model that can extract self-reported information such as age, gender, race, ethnicity with high accuracies, even insurance status at moderate rates.</p>
+<p>While the question of whether their results are reproducible has been more adequately answered elsewhere, we are interested if it possible to reproduce their results on a smaller scale. Moreover, we aim to answer the ethical implications of their work beyond the problems of bias it poses to deep neural networks. <span class="citation" data-cites="gichoya2022ai">Gichoya et al. (<a href="#ref-gichoya2022ai" role="doc-biblioref">2022</a>)</span> “emphasise that the ability of AI to predict racial identity is itself not the issue of importance”, but is this enough? It does not seem to be adequate to stop at this conclusion when racial classification itself is a goal that is long rooted in the painful histories of eugenics, slavery, and colonization. To this extent we will exposit some more about the definition of race and its use in medicine.</p>
+
+<!-- Race-based medicine, according to [Cerdena et al.](https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(2032076-6/fulltext), is characterized by medical research that treats race as an essential and biological factor. When translated into clinical practice, race-based medicine relies on racial stereotypes and leads to faulty, inequitable care. For example, because Asian patients are presumed to have more visceral body fat than other races, they are considered to be at higher risk for diabetes. Because race-based medicine serves as a shortcut so that doctors can work around a patient's personal pathological history, it can either exaggerate or underestimate a patient's risk for certain illnesses. Not only can race-based medicine reinforce racist stereotypes, it can also limit access to treatment for patients wrongly considered as lower-risk for a disease.
+
+It is understandable that pathological information about a patient can be extracted from their chest X-ray. However, [Adleberg et. al](https://pubmed.ncbi.nlm.nih.gov/35964688/) created a deep learning model that can extract self-reported information such as age, gender, race, ethnicity and insurance status with almost 100% certainty. Similarly, [Gichoya et. al](https://www.thelancet.com/journals/landig/article/PIIS2589-7500(22)00063-2/fulltext) also successfully created a model that can predict race from chest X-rays. They also confirmed that disease distribution and body habitus among patients did not strongly affect the prediction of their model. This means that their model – and in extension, other deep learning models used in medicine – can pick up a patient's race based on their medical images. This could lead to race-specific errors that clinical radiologists without access to demographic information would not be able to tell, and thus resulting in faulty medical decision-making.
+
+Our goal when undertaking this project is to find out whether it is possible for deep learning models to detect race from racially ambiguous data such as chest X-rays. We would also like to investigate the potential ethical risks that the success of this project poses. Racial inequalities may be justified by the identifiable physiological differences between the races. Also, this project may introduce new possibility for surveillance methods: medical surveillance. -->
+</section>
+<section id="race-in-medicine" class="level1">
+<h1>Race in Medicine</h1>
+<p>The most concerning question we face are the implications of this model. The direct usages for this algorithm are limited. However, its main value is in its demonstration; anyone using an AI algorithm may be unknowingly be using similar procedures to this one to classify self-reported and use this as a proxy for other classifcation tasks.</p>
+<p>We cannot ignore that there still may be potential users of this algorithm. The very goal of racial classification contains an implicit assumption that race exists. However, we must address two central questions: what race represents in medicine, and how race has been used for clinical practice.</p>
+<section id="does-race-exist" class="level2">
+<h2 class="anchored" data-anchor-id="does-race-exist">Does Race Exist?</h2>
+<p>Whether race exists as a biological phenomenon, and not as a social construct, is a hotly debated issue. As <span class="citation" data-cites="cerdena2020race">Cerdeña, Plaisime, and Tsai (<a href="#ref-cerdena2020race" role="doc-biblioref">2020</a>)</span> note, “race was developed as a tool to divide and control populations worldwide. Race is thus a social and power construct with meanings that have shifted over time to suit political goals, including to assert biological inferiority of dark-skinned populations.”</p>
+<p>One justification for the biological reality of races is based on the assumption that different races have distinct genetics from one another, and can be fit into genetic groups. However, <span class="citation" data-cites="maglo2016population">Maglo, Mersha, and Martin (<a href="#ref-maglo2016population" role="doc-biblioref">2016</a>)</span> note that humans are not distinct by evolutionary criteria and genetic similarities between “human races, understood as continental clusters, have no taxonomic meaning”, with there being “tremendous diversity within groups” [2]. Whether race defines a genetic profile is therefore unclear at best, with correlations between race and disease being confounded by variables such as the association between race and socioeconomic variables.</p>
+</section>
+<section id="what-is-race-based-medicine" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-race-based-medicine">What is Race-based Medicine?</h2>
+<p>It is possible that some may be interested in using this algorithm to deduce the race of an individual and use this as part of medical decisions. There are some correlations between disease prevalence and race. <span class="citation" data-cites="maglo2016population">Maglo, Mersha, and Martin (<a href="#ref-maglo2016population" role="doc-biblioref">2016</a>)</span> note that “Recent studies showed that ancestry mapping has been successfully applied for disease in which prevalence is significantly different between the ancestral populations to identify genomic regions harboring diseases susceptibility loci for cardiovascular disease (<span class="citation" data-cites="tang2005genetic">Tang et al. (<a href="#ref-tang2005genetic" role="doc-biblioref">2005</a>)</span>), multiple sclerosis (<span class="citation" data-cites="reich2005whole">Reich et al. (<a href="#ref-reich2005whole" role="doc-biblioref">2005</a>)</span>), prostate cancer (<span class="citation" data-cites="freedman2006admixture">Freedman et al. (<a href="#ref-freedman2006admixture" role="doc-biblioref">2006</a>)</span>), obesity (<span class="citation" data-cites="cheng2009admixture">Cheng et al. (<a href="#ref-cheng2009admixture" role="doc-biblioref">2009</a>)</span>), and asthma (<span class="citation" data-cites="vergara2009african">Vergara et al. (<a href="#ref-vergara2009african" role="doc-biblioref">2009</a>)</span>)” [2].</p>
+<p>These practices would be characteristic of race-based medicine. As <span class="citation" data-cites="cerdena2020race">Cerdeña, Plaisime, and Tsai (<a href="#ref-cerdena2020race" role="doc-biblioref">2020</a>)</span> argue, this is “the system by which research characterizing race as an essential, biological variable, [which] translates into clinical practice, leading to inequitable care” [1]. Notably, then, race-based medicine has come under heavy criticism.</p>
+</section>
+<section id="the-harms-of-race-based-medicine" class="level2">
+<h2 class="anchored" data-anchor-id="the-harms-of-race-based-medicine">The Harms of Race-based Medicine</h2>
+<p>As stated above, race is not an accurate proxy for genetics. <span class="citation" data-cites="cerdena2020race">Cerdeña, Plaisime, and Tsai (<a href="#ref-cerdena2020race" role="doc-biblioref">2020</a>)</span> note that in medical practices, race is used as an inaccurate guideline for medical care: “Black patients are presumed to have greater muscle mass …On the basis of the understanding that Asian patients have higher visceral body fat than do people of other races, they are considered to be at risk for diabetes at lower body-mass indices” [1]. As they note, race-based medicine can be founded more on racial stereotypes and generalizations rather than.</p>
+<p>Moreover, race-based medicine can lead to ineffective treatements. <span class="citation" data-cites="apeles2022race">Apeles (<a href="#ref-apeles2022race" role="doc-biblioref">2022</a>)</span> summarizes the results of a study on race-based prescriptions for Black patients for high blood pressure. While this study demonstrates that alternative prescriptions for Black patients with high blood pressure have been shown to be ineffective, “Practice guidelines have long recommended that Black patients with high blood pressure and no comorbidities be treated initially with a thiazide diuretic or a calcium channel blocker (CCB) instead of an angiotensin converting enzyme inhibitor (ACEI) and/or angiotensin receptor blocker (ARB). By contrast, non-Black patients can be prescribed any of those medicines regardless of comorbidities.” In addition, the authors of the study found that “other factors may be more important than considerations of race, such as dose, the addition of second or third drugs, medication adherence, and dietary and lifestyle interventions. Follow-up care was important, and the Black patients who had more frequent clinical encounters tended to have better control of their blood pressure.”</p>
+<p>In addition, <span class="citation" data-cites="vyas2020hidden">Vyas, Eisenstein, and Jones (<a href="#ref-vyas2020hidden" role="doc-biblioref">2020</a>)</span> argue that race is ill-suited as a correction factor for medical algorithms. As they found, algorithms as the American Heart Association (AHA) Get with the Guidelines–Heart Failure Risk Score, which predicts the likelihood of death from heart failure, the Vaginal Birth after Cesarean (VBAC), which predicts the risk of labor for someone with a previous cesarean section, and STONE score, which predicts the likelihood of kidney stones in patients with flank pain, all used race to change their predictions of the likelihood or morbidities. However, they find that these algorithms were not sufficiently evidence based as “Some algorithm developers offer no explanation of why racial or ethnic differences might exist. Others offer rationales, but when these are traced to their origins, they lead to outdated, suspect racial science or to biased data”. Using race can then discourage racial minorities from receiving the proper treatment based on their scores, exacerbating already existing problems of unequal health outcomes.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>So it is clear that anyone who intends to use race for diagnosis could harm racial minority groups. Race inherently is a complex social and economic phenomenon and cannot be said to be a clear biological variable. Hence anyone intending to use or create algorithms will run the risk of creating dangerous biases in treatment; ones that could worsen the existing disparities in care for vulnerable populations.</p>
+</section>
+</section>
+<section id="values-statement" class="level1">
+<h1>3. Values Statement</h1>
+<p>The potential <strong>users</strong> of this project are scholars and researchers who remain adamant in exploring the classification of <em>race</em> through the intersection of other socially constructed identities (gender, ethnicity, sexuality, etc.). There have been numerous literatures potentially identifying <em>race</em> as a proxy for categorizing and describing certain social, cultural, and biological characteristics of individuals or groups; it has also become pervasive in its history and role in the medical field. Those who are harmed and still are affected by this project would be the <em>hidden</em> bodies — the group of individuals historically marginalized in society — and whose very identities are in a constant battle of validity. In pursuit of this project, we acknowledge that the technology and results could further harm and perpetuate the racist ideologies that currently exists in <em>validating</em> the physiological differences across racial groups.</p>
+<p><strong>What is your personal reason for working on this problem?</strong></p>
+<p>Jay-U: My personal motivation for working on this project was my interest in <span class="citation" data-cites="gichoya2022ai">Gichoya et al. (<a href="#ref-gichoya2022ai" role="doc-biblioref">2022</a>)</span>’s paper. I thought it was very suprising that they were able to identify race from chest X-rays when I think that there should be nothing identifying about the images. I think that ethically it is problematic, so I wanted to explore their methods and verify if it was reproducible, as well as reading more about race and its use in medicine.</p>
+<p>Kent: My personal reason for working on this project was to engage in an ethical conversation about the implications of classifying race through AI. Jay-U provided the initial literature to this project, and it motivated me to exercise bias auditing if any of the algorithms proved to be flawed.</p>
+
+<!-- We do not believe that there are many users for this model. The only instance in which we think this model could be useful is when we need to expose a celebrity for cultural appropriation by showing that their chest X-ray does not belong in that cultural group per se; but of course, this is a stretch. Despite the lack of people who might actually use the model, the results of this project may be used to justify racial inequalities because apparently according to this model there are identifiable differences between the races — not just superficial differences in skin tone or hair texture, but bones, subcutaneous differences that we cannot see. If this model fell into the hands of a eugenicist, the repercussions would be dire. In that case, this model would work towards the direction that Dr. Timnit Gebru had warned us against: eugenics comes back to us again and again in increasingly progressive and scientific forms. 
+
+In short, potential users for our projects are propagandists working to discriminate against minorities. Even though this is not our goal, it will undoubtedly marginalize a lot of people if eugenicists happen upon our results. However, since we are not the first to undertake this project, and there are more comprehensive studies of the same subject done by Adleberg et al. and Gichoya et al, we believe that we are not worsening this risk.
+
+As for our goal, we aim to check if it is indeed possible to classify race this way. We also want to know what could lead to this possibility: whether the model is picking up on something that is not indicative of race and using that to make its decision, or there is indeed a racial difference. In the past, we learned about an image classification model that was trained to detect criminals but turned out to detect if someone is smiling or not. This could be the case for our model, but until there is an actual test, we cannot conclude anything on how exactly our model is making its decisions. 
+
+Gichoya et al., however, have done several tests to confirm that their model was indeed using physiological differences to make its classification. If we were allowed more time and computing power, we might arrive at the same conclusion, which would work in favor of our professed fears. Therefore, our second deliverable, to provide a rebuttal against those who may extrapolate our results to their ends, is a paper demonstrating our findings on the ambiguity of race in medicine.
+
+The potential justification of racial inequalities is, of course, still potential. We have yet to receive a newsletter extrapolating the results of Gichoya et al. to call for the reintroduction of racial segregation. However, the success of this project still shows us a very real, ongoing injustice: that deep learning models currently used in medicine are also capable of identifying a patient's race based on their racially ambiguous medical images, and thus turning the patient's race into a vector in the decision-making matrix of the model. Again, this works in the direction that Dr. Gebru had warned us against: inequitable medical care is administered by supposedly fair machines. Working on this project, we do not aim to solve a problem, but to see what the problem is. -->
+</section>
+<section id="materials-and-methods" class="level1">
+<h1>4. Materials and Methods</h1>
+</section>
+<section id="our-data" class="level1">
+<h1>Our Data</h1>
+<p>We used the <a href="https://stanfordmlgroup.github.io/competitions/chexpert/">ChexPert dataset</a> collected by <span class="citation" data-cites="irvin2019chexpert">Irvin et al. (<a href="#ref-irvin2019chexpert" role="doc-biblioref">2019</a>)</span>. The dataset contains images collected between between October 2002 and July 2017, where the dataset was eventually finalized after analyzing all images from Stanford Hospital. This dataset contains 224,316 frontal and lateral chest radiographs of 65,240 patients. Each radiograph is labeled with information such as age, gender, race, ethnicity and medical conditions, but we are primarily concerned with race and gender. A full structured datasheet of the ChexPert dataset has been explained by <span class="citation" data-cites="garbin2021structured">Garbin et al. (<a href="#ref-garbin2021structured" role="doc-biblioref">2021</a>)</span>.</p>
+<p>One limitation in the dataset includes a limited variety of x-ray devices to capture the images as the dataset is only coming from one institution — Stanford Hospital. Thus, models trained on this dataset can only be said to be valid for patients living around the Stanford area and for scans coming from this hospital. It is always a possibility that our model is specializing to some features specific to these images from Stanford, so our models may perform worse when evaluatinf on scans for different institutions.</p>
+<p>Notice that our actual data is from <a href="https://www.kaggle.com/datasets/ashery/chexpert">Kaggle</a> as the original 11 GB dataset with smaller images was unavailable.</p>
+<p>The two relevant datasets include this df_patients dataframe, which contains a path to the images of the patient, their Sex (male or female), Age, and Frontal/Lateral (indicating whether their scan is from the from or side). The remaining columns are disease related and were not relevant to our analysis.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df_patients <span class="op">=</span> pd.read_csv(<span class="st">'../data/train.csv'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>df_patients</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Path</th>
+      <th>Sex</th>
+      <th>Age</th>
+      <th>Frontal/Lateral</th>
+      <th>AP/PA</th>
+      <th>No Finding</th>
+      <th>Enlarged Cardiomediastinum</th>
+      <th>Cardiomegaly</th>
+      <th>Lung Opacity</th>
+      <th>Lung Lesion</th>
+      <th>Edema</th>
+      <th>Consolidation</th>
+      <th>Pneumonia</th>
+      <th>Atelectasis</th>
+      <th>Pneumothorax</th>
+      <th>Pleural Effusion</th>
+      <th>Pleural Other</th>
+      <th>Fracture</th>
+      <th>Support Devices</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>CheXpert-v1.0-small/train/patient00001/study1/...</td>
+      <td>Female</td>
+      <td>68</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>CheXpert-v1.0-small/train/patient00002/study2/...</td>
+      <td>Female</td>
+      <td>87</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>CheXpert-v1.0-small/train/patient00002/study1/...</td>
+      <td>Female</td>
+      <td>83</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>CheXpert-v1.0-small/train/patient00002/study1/...</td>
+      <td>Female</td>
+      <td>83</td>
+      <td>Lateral</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>CheXpert-v1.0-small/train/patient00003/study1/...</td>
+      <td>Male</td>
+      <td>41</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>223409</th>
+      <td>CheXpert-v1.0-small/train/patient64537/study2/...</td>
+      <td>Male</td>
+      <td>59</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>0.0</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>223410</th>
+      <td>CheXpert-v1.0-small/train/patient64537/study1/...</td>
+      <td>Male</td>
+      <td>59</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>223411</th>
+      <td>CheXpert-v1.0-small/train/patient64538/study1/...</td>
+      <td>Female</td>
+      <td>0</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>223412</th>
+      <td>CheXpert-v1.0-small/train/patient64539/study1/...</td>
+      <td>Female</td>
+      <td>0</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>-1.0</td>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>223413</th>
+      <td>CheXpert-v1.0-small/train/patient64540/study1/...</td>
+      <td>Female</td>
+      <td>0</td>
+      <td>Frontal</td>
+      <td>AP</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+<p>223414 rows × 19 columns</p>
+</div>
+</div>
+</div>
+<p>This df_race dataframe links the patients ID to their gender, age, primary race, and ethnicity.</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df_race <span class="op">=</span> pd.read_excel(<span class="st">'../data/chexpert_race.xlsx'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_race</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>PATIENT</th>
+      <th>GENDER</th>
+      <th>AGE_AT_CXR</th>
+      <th>PRIMARY_RACE</th>
+      <th>ETHNICITY</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>patient24428</td>
+      <td>Male</td>
+      <td>61</td>
+      <td>White</td>
+      <td>Non-Hispanic/Non-Latino</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>patient48289</td>
+      <td>Female</td>
+      <td>39</td>
+      <td>Other</td>
+      <td>Hispanic/Latino</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>patient33856</td>
+      <td>Female</td>
+      <td>81</td>
+      <td>White</td>
+      <td>Non-Hispanic/Non-Latino</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>patient41673</td>
+      <td>Female</td>
+      <td>42</td>
+      <td>Unknown</td>
+      <td>Unknown</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>patient48493</td>
+      <td>Male</td>
+      <td>71</td>
+      <td>White</td>
+      <td>Non-Hispanic/Non-Latino</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>65396</th>
+      <td>patient65702</td>
+      <td>Male</td>
+      <td>1</td>
+      <td>Other</td>
+      <td>Hispanic/Latino</td>
+    </tr>
+    <tr>
+      <th>65397</th>
+      <td>patient04979</td>
+      <td>Female</td>
+      <td>27</td>
+      <td>Other</td>
+      <td>Hispanic/Latino</td>
+    </tr>
+    <tr>
+      <th>65398</th>
+      <td>patient11445</td>
+      <td>Female</td>
+      <td>29</td>
+      <td>Unknown</td>
+      <td>Unknown</td>
+    </tr>
+    <tr>
+      <th>65399</th>
+      <td>patient23235</td>
+      <td>Female</td>
+      <td>41</td>
+      <td>Other, Hispanic</td>
+      <td>Hispanic/Latino</td>
+    </tr>
+    <tr>
+      <th>65400</th>
+      <td>patient05143</td>
+      <td>Male</td>
+      <td>24</td>
+      <td>White</td>
+      <td>Non-Hispanic/Non-Latino</td>
+    </tr>
+  </tbody>
+</table>
+<p>65401 rows × 5 columns</p>
+</div>
+</div>
+</div>
+<p>For our purposes, we combined the two dataframes to match the image links with the patient race. This was achieved by using the patient ID within each of the image paths to combine the two.</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df_race[<span class="st">'PRIMARY_RACE'</span>].unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+<pre><code>array(['White', 'Other', 'Unknown', 'White, non-Hispanic', 'Asian', nan,
+       'Black or African American', 'Black, non-Hispanic',
+       'Other, Hispanic', 'Race and Ethnicity Unknown',
+       'Asian, non-Hispanic', 'Pacific Islander, non-Hispanic',
+       'Native Hawaiian or Other Pacific Islander', 'Other, non-Hispanic',
+       'Patient Refused', 'White, Hispanic', 'Black, Hispanic',
+       'Asian, Hispanic', 'American Indian or Alaska Native',
+       'Native American, Hispanic', 'Native American, non-Hispanic',
+       'Pacific Islander, Hispanic', 'Asian - Historical Conv',
+       'White or Caucasian'], dtype=object)</code></pre>
+</div>
+</div>
+<p>There are quite a few self-reported race labels, but we focused only on White, Black, and Asian. As in Gichoya’s code, we decided to label any race containing White as White (so this include White, non-Hispanic and White, Hispanic), and vice versa for Black and Asian.</p>
+<p>Whether this approach is valid is somewhat questionable, but perhaps the actual ethnographic definitions of race are similarly ill-defined.</p>
+<p>After combining our dataframes and removing any patients not identifying as White, Black, or Asian (including the non-reported or nan columns), we now create the following figures. As seen below, imaghes from White patients occupy the vast majority of this data and we are concerned that this may lead to a racial bias in the model’s classification algorithm.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="imbalance.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">imbalance</figcaption><p></p>
+</figure>
+</div>
+<p>Interestingly more images belong to male than female patients also, which could lead to gender bias in our algorithm.</p>
+<p><img src="balance.png" class="img-fluid" alt="balance1"> <img src="gender.png" class="img-fluid" alt="balance2"></p>
+</section>
+<section id="our-method" class="level1">
+<h1>Our Method</h1>
+<section id="data-subsetting" class="level2">
+<h2 class="anchored" data-anchor-id="data-subsetting">Data Subsetting</h2>
+<p>We trained our model using 10,000 frontal chest X-rays, such as the one in the following figure. The only input features are from the image itself, and the only target is race.</p>
+<p>We created the train and test datasets by taking on the Black, White, and Asian populations. The dataset in total is 90000 images, with 72,000 in the train set and 18,000 in the test set. We created the equal proportion training set by taking the first 6000 images from each race group (this includes almost all the Black patients, the smallest group) in the training set and randomizing the order. A similar process held for the test set, but in total it is only 3000 images.</p>
+<p>Aside from potential bias, subsetting the data makes it easier to train and evaluate an algorithm. Especially since we are not using a very large amount of data, using a large model can easily overfit to the demographics of the patient. Attempts to use the unbalanced training set essentially resulted in a algorithm that would always guess White. By using a balanced set, it is easier for the model to learn about the features without this frequency bias.</p>
+<p>We created more training sets that also included only the frontal scans. We noticed that this is something that Gichoya et. al did. Whether it actually makes a meaningful difference is not clear, but since the lateral scans are not as common, it is possible that this hinders the models from learning.</p>
+<p>For actual training, we only use 10,000 images due to the lack of computing power. Our training was done on the standard T4 GPUs available in Google Colab. Again, this is significant difference from Gichoya et. al, who use more than 100,000 images in their algorithm.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="view1_frontal.jpg" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">chest X-ray</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="image-transforms" class="level2">
+<h2 class="anchored" data-anchor-id="image-transforms">Image Transforms</h2>
+<p>We also used the image transforms that Gichoya et. al implmeneted. This includes an image resize to (224 by 244), image normalization (to the ImageNet mean and standard deviation), random horizontal flips, random rotations at a maximum of 15 degrees. We did not include a random zoom as in the paper however. In general, these are a good way of preventing overfitting. Some transformation like the random rotations may also prevent the model from generalizing some specific features, like a patient’s lean or posture.</p>
+</section>
+<section id="models" class="level2">
+<h2 class="anchored" data-anchor-id="models">Models</h2>
+<p>As for our models themselves, we used ResNet and EfficientNet. These are popular deep learning architectures for image classification, and have both achieved high accuracies of around 70-80% when evaluated on the ImageNet data base. Specifically, we used pretrained EfficientNetB0 and ResNet18 models. We chose these specific variations because they have a low number of parameters (which means faster training time and a smaller chance of overfitting). Moreover, these models are trained on the 224 by 224 image size that we used.</p>
+<p>We also implemented some ResNet18 models on our own but achieved a lower accuracy. A problem with deep neural networks is that performance degrades with more layers. This occurs even when an identity operation is conudcted. Hence ResNet combats this issue by using skip connections, which saves the output from previous layers and adds it to the current output, avoiding this degradation.</p>
+<p>To gauge what the ResNet18 model is “looking” at, we extracted the filters from the first convolutional layer to visualize the feature maps across three convolutional layers: layer 0, layer 8, and the last layer 16.</p>
+<p>To optimize a model, we would train it on 10,000 images in a loop, using different learning rates for the Adam optimizer and <span class="math inline">\(\gamma\)</span> values for the exponential scheduler. We trained all the parameters of our pretrained model. We assumed that since there is no reason that the ImageNet database would contain X-ray like images, it would be best to tune all parameters.</p>
+<p>We note that the training process for the self-implemented Resnet18 model was different. We trained first with an exponential learning rate scheduler for 30 epochs, then 15 epochs on the learning rate plateu scheduler as the loss did not decrease otherwise.</p>
+<p>In the same loop, we would then validate the model on 2,500 other images from the training set to find the optimal hyperparameters. Cross entropy loss was used for all models.</p>
+<p>We define accuracy as the proportion of correct guesses, and we analyze the confusion matrices of our model.</p>
+<p>As mentioned before, there may be a gender bias in our model because there are more male than female patients in our training dataset. We inspected this by splitting our test set into male and female counterparts and testing the model on each subset. Gender bias is then examined by looking at the score and confusion matrix for each gendered subset.</p>
+</section>
+</section>
+<section id="results" class="level1">
+<h1>5. Results</h1>
+<section id="loss-and-accuracy-history" class="level2">
+<h2 class="anchored" data-anchor-id="loss-and-accuracy-history">Loss and Accuracy History</h2>
+<p>Our best models achieved an accuracy of about 70-75% on the equal testing set. Pretrained ResNet and EfficientNet models obtained similar accuracies and losses, so we will display only EfficientNet results.</p>
+<p>After optimizing the pretrained EfficientNetB0 algorithm with an initial learning rate at 0.001 and an exponential scheduler with <span class="math inline">\(\gamma = 0.735\)</span>, we achieved an accuracy of 74% on the balanced test set.</p>
+<p>As we can see in the following figures, the training score and loss gradually improved, while the validation score and loss plateau after a few epochs. This is likely a sign of overfitting. We tried to optimize the model by altering the scheduler type, varying the Adam learning rate from 0.001 to 0.01, but the overfitting persisted.</p>
+<p><img src="loss0735.png" class="img-fluid" alt="EfficientNetB0 loss"> <img src="score0735.png" class="img-fluid" alt="EfficientNetB0 score"></p>
+<p>We also did our own implementation of ResNet18, and obtained comparable results. The learning rate was also set to 0.001, and the exponential scheduler at <span class="math inline">\(\gamma = 0.735\)</span>. The issue of overfitting remained, and our model achieved a score of 68% when tested on unseen data.</p>
+</section>
+<section id="confusion-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="confusion-matrix">Confusion Matrix</h2>
+<p>Shown below are the confusion matrices for the EfficientNetB0 model with <span class="math inline">\(\gamma = 0.735\)</span> over a subset of 2500 male and female patients for both frontal and lateral images. The horizontal axis represents the predicted classes (White, Black, Asian), and the vertical axis represents the true labels.</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>Confusion matrix for male patients</em></th>
+<th style="text-align: center;"><em>Confusion matrix for female patients</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="male.png" style="width:500px;"></td>
+<td style="text-align: center;"><img src="female.png" style="width:500px;"></td>
+</tr>
+</tbody>
+</table>
+<p>From the confusion matrices above, we notice that for male patients, the model classified White the best class, with 78% of the predictions to be true. Whereas, for the female patients, the model classified Asian the best class, with 79% of the predictions to be true. However, across all classes (White, Black, Asian), the percentage of true-positives are relatively the same and can be interpreted to be equivalent.</p>
+<p>For male patients, 19% of the Black class and 18% of the Asian class were predicted as White. For female patients, 17% of the Black class and 15% of the Asian class were predicted as White. These rates are similar for the misclassification of White patients predicted as Asian — 12% of the male White class and 16% of the female White class were predicted as Asian. In contrast, the model has a significantly lower percentage of classifying the Asian and White class as part of the Black class, especially in falsely predicting Black as Asian and vice versa.</p>
+<p>Thus, although we have trained on an equal subset of each class (White, Black, Asian), the confusion matrix suggests that there may be representational bias with how a certain class such as the White class will be more likely to be predicted than the Black and Asian class. Thus, though the model does classify each race at a relatively moderate accuracy (up to 80% accuracy), it may also be at the cost of producing inaccurate classifications to a patient’s true race — which is highly favored for those belonging in the White class. This can result in heavy implications if an algorithm like this were to be commercialized and probes the validity of similar algorithms that yield a “high” accuracy rates for the true races. The causes are not clear with our current analysis, but perhaps the number of distinct patients represented amongst those images is not equal - White patients on average do have more images, which could mean a smaller number of distinct patients during training.</p>
+<p>To compare, we also show the self-implemented Resnet18 confusion matrices. Notice that the correct predictions remain the same even for the unequal testing set. Of course, the accuracy of 71% is not quite good enough to match the base accuracy of 78% (if the algorithm were to guess all White).</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>Self-implemented Resnet18, Equal Set</em></th>
+<th style="text-align: center;"><em>Self-implemented Resnet18, Unequal Set</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="self_resnet_equal_frontal.png" style="width:500px;"></td>
+<td style="text-align: center;"><img src="self_resnet_frontal.png" style="width:500px;"></td>
+</tr>
+</tbody>
+</table>
+<p>Interestingly here, the correct predictions for Black and Asian are significantly worse than for EfficientNetB0. The general trend of the false predictions, while higher than in EfficientNetB0, do adhere to the similar trends discussed.</p>
+</section>
+<section id="visualized-feature-map" class="level2">
+<h2 class="anchored" data-anchor-id="visualized-feature-map">Visualized Feature Map</h2>
+<p>Using our self-implemented ResNet18 model, we demonstrate below the first convolutional layer’s filters, and the feature maps of three convolutional layers — layer 0, layer 8, and layer 16 (the last layer).</p>
+<p>The patient used for this demonstration is a White, non-hispanic Female. Shown below is the patient’s frontal-view image used for this experiment.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>Frontal-view image of patient</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="patient2.jpg" width="500"></td>
+</tr>
+</tbody>
+</table>
+<p>And here is the first convolutional layer’s filter:</p>
+<table class="table">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>First convolutional layer filter of the self-implemented ResNet-18 neural network model</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="filter.png" width="500"></td>
+</tr>
+</tbody>
+</table>
+<p>Then, we passed the filter through each of the convolutional layers of the model. For simplicity, we only showed three of the total layers. It is interesting to see that there is varied noise as to what the model “looks” at, highlighted by the whiter patches of the image — which also corresponds to which part of the image is “activated”!</p>
+<table class="table">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>Feature maps from the first convolutional layer (layer 0) of self-implemented ResNet18 model</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="layer-0.png" width="700"></td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>Feature maps from the ninth convolutional layer (layer 8) of self-implemented ResNet18 model</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="layer-8.png" width="700"></td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<colgroup>
+<col style="width: 100%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><em>Feature maps from the last convolutional layer (layer 16) of self-implemented ResNet18 model</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="layer-16.png" width="700"></td>
+</tr>
+</tbody>
+</table>
+<p>After displaying the three layers, we observed that the last layer is highly disoriented, and the regular human eye can no longer distinguish the original image (the patient’s frontal-view). This last layer serves high importance as it is used to deduce what the model is actually classifying based off “features” it has learned. Additionally, we also observe that the model focused on different aspects of the image as the filters used to create the feature map vary.</p>
+<p>What exactly it is observing is unclear, perhaps we can say that it is able to distinguish between the bones and lungs of an X-ray.</p>
+</section>
+</section>
+<section id="conclusion-1" class="level1">
+<h1>6. Conclusion</h1>
+<p>The models that our project produced can classify race at around 70-75% accuracy based only on chest X-rays. Given that this is conducted on the balanced set, this seems to affirm that chest X-rays can be used to predict race.</p>
+<p>We also investigated the ethical issues that these models could pose. We speculate that if the results of this project were used in bad faith, existing racial inequalities would be reinforced and worsened. While this is not a conclusion supported by the algorithm or any other literature, some may interpret this algorithm as evidence for racial essentialism. This would be a problematic conclusion given the ethical and practical issues of racial essentialism, and its byproduct, race-based medicine.</p>
+<p>Right now, our model is still in its infancy, and we do not know for sure what the model is looking at to make its decision. If we had more time, the first thing we would do is test our algorithm on the MIMIC-CXR dataset. Training and validating on multiple chest X-rays would show more convincingly that medical imaging AI can detect race. With access to better resources, we could have tried to train on a larger subset of the data. Looking into regularization methods could have also helped with overfitting, as well as reducing the number of layers and thus the parameters of the model, or trying to train only on the linear layers of complex models.</p>
+</section>
+<section id="group-contributions-statement" class="level1">
+<h1>7. Group Contributions Statement</h1>
+<p>Trong: I downloaded the ChexPert dataset to a shared drive to make the pathways in our Google Colab consistent; visualized racial and gender imbalances in the training data; trained ResNet18 models with different schedulers; visualized training and validation losses for each model; investigated gender bias for the pretrained EfficientNetB0 model. I tried to implement the code from <a href="https://github.com/Emory-HITI/AI-Vengers/tree/main#readme">here</a> but it didn’t work. I also wrote the project presentation script, the blogpost, and finalized the ethics research.</p>
+<p>Jay-U: I found the paper by Gichoya et. al on classifying race using Chest X-rays. I found the CheXpert dataset and created the subsets. I created the dataset function for the dataloader (including the transforms). I identified the algorithms to use and experimented with them, using the ResNet and EfficientNet algorithms. I also did a self-implementation on the ResNet18/ResNet34 algorithms and trained them. I implemented the training and testing functions, the optimization loop, and added the learning rate scheduler. I also created a way to save and load models, having trained the pretrained ResNet18 and EfficientNet algorithms with the exponential and plateu schedulers.</p>
+<p>I also worked on the research, finding and doing the writeups for the introduction (the results similar to the work we’re doing). I also found the papers around race-based medicine and finished my write up. I made edits to the project presentation, and all sections of the blogpost.</p>
+<p>Kent: I aided in exploratory data visualizations for the CheXpert dataset. I also implemented code to visualize the activation maps for the self-implemented ResNet18 model.</p>
+<p>I helped format the project presentation and aided in editing a portion of the sections. I supported in writing the Values Statement, Methods (added datasheet) and Results (interpreting the confusion matrix + auditing for bias) sections, alongside creating the bibliography.</p>
+</section>
+<section id="personal-reflection" class="level1">
+<h1>8. Personal Reflection</h1>
+<p>I learned a lot about image classification. This was also through the class, but I learned about the Resnet algorithm and about how to implement it. I learned how to use pytorch, how to create a dataset loader, how to use pretrained models, how to optimize models, and how to save and load models. I also learned, along the way, about some subtleties in overfitting (though we were not really able to implement corrections). I didn’t have the time to show these, but I did experiment a lot. I tried training just the linear layer, training the EfficientNetB4 algorithm (before realizing that EfficientNetB0 would be better). I even tried a two-step training process in which I trained first on the equal set, and then trained on the unequal set (which some papers have shown do help address the issue of unequal proportions).</p>
+<p>I also learned about race-based medicine and its drawbacks. I had previously known about race-based medicine or even read scientific papers about whether race exists as a biological factor. It was a struggle at first to specifically answer how medicine and race are related, so this was a part in which I learned a lot.</p>
+<p>I think that I did grow in terms of trying to manage a group. While it wasn’t succesful, I did set weekly meetings and make a Todo list, things that I thought would help keep people on the same page.</p>
+<p>I think overall I fell short in what I achieved. I am proud that I was able to get my implementations to work decently well on the balanced set, even if my goal was to make them work on the unbalanced set. Overall, it would have been nice to reach the goals I mentioned in the conclusion, or try different metrics like the AUC metric that Gichoya et. al did. I think the analysis and writing on this blog post also is not as complete as I would have hoped either. I do feel like I missed out on the enriching parts about group work. In terms of coding or writing, it would have been more fulfilling if others engaged with what I posted and made corrections or showed me their own work.</p>
+<p>With this project, I am more confident in my abilities to learn about new topics in machine learning. It was initially quite daunting, and I was able to make a project that at least worked. I have also thought a lot more about ethics in computing and in medicine, and I hope that this goal of socially conscientious computing will stick with me.</p>
+
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-adleberg2022predicting" class="csl-entry" role="doc-biblioentry">
+Adleberg, Jason, Amr Wardeh, Florence X Doo, Brett Marinelli, Tessa S Cook, David S Mendelson, and Alexander Kagen. 2022. <span>“Predicting Patient Demographics from Chest Radiographs with Deep Learning.”</span> <em>Journal of the American College of Radiology</em> 19 (10): 1151–61.
+</div>
+<div id="ref-apeles2022race" class="csl-entry" role="doc-biblioentry">
+Apeles, Linda. 2022. <span>“Race-Based Prescribing for Black People with High Blood Pressure Shows No Benefit.”</span> <em>Patient Care</em>.
+</div>
+<div id="ref-cerdena2020race" class="csl-entry" role="doc-biblioentry">
+Cerdeña, Jessica P, Marie V Plaisime, and Jennifer Tsai. 2020. <span>“From Race-Based to Race-Conscious Medicine: How Anti-Racist Uprisings Call Us to Act.”</span> <em>The Lancet</em> 396 (10257): 1125–28.
+</div>
+<div id="ref-cheng2009admixture" class="csl-entry" role="doc-biblioentry">
+Cheng, Ching-Yu, WH Linda Kao, Nick Patterson, Arti Tandon, Christopher A Haiman, Tamara B Harris, Chao Xing, et al. 2009. <span>“Admixture Mapping of 15,280 African Americans Identifies Obesity Susceptibility Loci on Chromosomes 5 and x.”</span> <em>PLoS Genetics</em> 5 (5): e1000490.
+</div>
+<div id="ref-freedman2006admixture" class="csl-entry" role="doc-biblioentry">
+Freedman, Matthew L, Christopher A Haiman, Nick Patterson, Gavin J McDonald, Arti Tandon, Alicja Waliszewska, Kathryn Penney, et al. 2006. <span>“Admixture Mapping Identifies 8q24 as a Prostate Cancer Risk Locus in African-American Men.”</span> <em>Proceedings of the National Academy of Sciences</em> 103 (38): 14068–73.
+</div>
+<div id="ref-garbin2021structured" class="csl-entry" role="doc-biblioentry">
+Garbin, Christian, Pranav Rajpurkar, Jeremy Irvin, Matthew P Lungren, and Oge Marques. 2021. <span>“Structured Dataset Documentation: A Datasheet for CheXpert.”</span> <em>arXiv Preprint arXiv:2105.03020</em>.
+</div>
+<div id="ref-gichoya2022ai" class="csl-entry" role="doc-biblioentry">
+Gichoya, Judy Wawira, Imon Banerjee, Ananth Reddy Bhimireddy, John L Burns, Leo Anthony Celi, Li-Ching Chen, Ramon Correa, et al. 2022. <span>“AI Recognition of Patient Race in Medical Imaging: A Modelling Study.”</span> <em>The Lancet Digital Health</em> 4 (6): e406–14.
+</div>
+<div id="ref-irvin2019chexpert" class="csl-entry" role="doc-biblioentry">
+Irvin, Jeremy, Pranav Rajpurkar, Michael Ko, Yifan Yu, Silviana Ciurea-Ilcus, Chris Chute, Henrik Marklund, et al. 2019. <span>“Chexpert: A Large Chest Radiograph Dataset with Uncertainty Labels and Expert Comparison.”</span> In <em>Proceedings of the AAAI Conference on Artificial Intelligence</em>, 33:590–97. 01.
+</div>
+<div id="ref-maglo2016population" class="csl-entry" role="doc-biblioentry">
+Maglo, Koffi N, Tesfaye B Mersha, and Lisa J Martin. 2016. <span>“Population Genomics and the Statistical Values of Race: An Interdisciplinary Perspective on the Biological Classification of Human Populations and Implications for Clinical Genetic Epidemiological Research.”</span> <em>Frontiers in Genetics</em> 7: 22.
+</div>
+<div id="ref-reich2005whole" class="csl-entry" role="doc-biblioentry">
+Reich, David, Nick Patterson, Philip L De Jager, Gavin J McDonald, Alicja Waliszewska, Arti Tandon, Robin R Lincoln, et al. 2005. <span>“A Whole-Genome Admixture Scan Finds a Candidate Locus for Multiple Sclerosis Susceptibility.”</span> <em>Nature Genetics</em> 37 (10): 1113–18.
+</div>
+<div id="ref-seyyed2021underdiagnosis" class="csl-entry" role="doc-biblioentry">
+Seyyed-Kalantari, Laleh, Haoran Zhang, Matthew BA McDermott, Irene Y Chen, and Marzyeh Ghassemi. 2021. <span>“Underdiagnosis Bias of Artificial Intelligence Algorithms Applied to Chest Radiographs in Under-Served Patient Populations.”</span> <em>Nature Medicine</em> 27 (12): 2176–82.
+</div>
+<div id="ref-tang2005genetic" class="csl-entry" role="doc-biblioentry">
+Tang, Hua, Tom Quertermous, Beatriz Rodriguez, Sharon LR Kardia, Xiaofeng Zhu, Andrew Brown, James S Pankow, et al. 2005. <span>“Genetic Structure, Self-Identified Race/Ethnicity, and Confounding in Case-Control Association Studies.”</span> <em>The American Journal of Human Genetics</em> 76 (2): 268–75.
+</div>
+<div id="ref-vergara2009african" class="csl-entry" role="doc-biblioentry">
+Vergara, Candelaria, Luis Caraballo, Dilia Mercado, Silvia Jimenez, Winston Rojas, Nicholas Rafaels, Tracey Hand, et al. 2009. <span>“African Ancestry Is Associated with Risk of Asthma and High Total Serum IgE in a Population from the Caribbean Coast of Colombia.”</span> <em>Human Genetics</em> 125: 565–79.
+</div>
+<div id="ref-vyas2020hidden" class="csl-entry" role="doc-biblioentry">
+Vyas, Darshali A, Leo G Eisenstein, and David S Jones. 2020. <span>“Hidden in Plain Sight—Reconsidering the Use of Race Correction in Clinical Algorithms.”</span> <em>New England Journal of Medicine</em>. Mass Medical Soc.
+</div>
+<div id="ref-yi2021radiology" class="csl-entry" role="doc-biblioentry">
+Yi, Paul H, Jinchi Wei, Tae Kyung Kim, Jiwon Shin, Haris I Sair, Ferdinand K Hui, Gregory D Hager, and Cheng Ting Lin. 2021. <span>“Radiology <span>‘Forensics’</span>: Determination of Age and Sex from Chest Radiographs Using Deep Learning.”</span> <em>Emergency Radiology</em> 28: 949–54.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

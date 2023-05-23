@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/project_blogpost/project.html",
       "/posts/dr_gebru/dr_gebru.html",
       "/posts/bias_audit/bias_audit.html",
       "/posts/linear_regression/linear_regression.html",
